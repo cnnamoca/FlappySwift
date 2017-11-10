@@ -14,7 +14,11 @@ class GameScene: SKScene, SKPhysicsContactDelegate{
     var bird:SKSpriteNode!
     var skyColor:SKColor!
     var pipeTextureUp:SKTexture!
+    var texturedRick:SKSpriteNode! //
+    
     var pipeTextureDown:SKTexture!
+    var texturedDownRick:SKSpriteNode! //
+    
     var movePipesAndRemove:SKAction!
     var moving:SKNode!
     var pipes:SKNode!
@@ -32,7 +36,7 @@ class GameScene: SKScene, SKPhysicsContactDelegate{
         canRestart = false
         
         // setup physics
-        self.physicsWorld.gravity = CGVector( dx: 0.0, dy: -5.0 )
+        self.physicsWorld.gravity = CGVector( dx: 0.0, dy: -7.0 )
         self.physicsWorld.contactDelegate = self
         
         // setup background color
@@ -80,10 +84,21 @@ class GameScene: SKScene, SKPhysicsContactDelegate{
         }
         
         // create the pipes textures
-        pipeTextureUp = SKTexture(imageNamed: "PipeUp")
+        pipeTextureUp = SKTexture(imageNamed: "picklerick")
         pipeTextureUp.filteringMode = .nearest
-        pipeTextureDown = SKTexture(imageNamed: "PipeDown")
+
+//        let texturedRick = SKSpriteNode(texture: pipeTextureUp)
+//        texturedRick.physicsBody = SKPhysicsBody(texture: pipeTextureUp,
+//                                                 size: CGSize(width: circularRick.size.width,
+//                                                              height: circularRick.size.height))
+        
+        pipeTextureDown = SKTexture(imageNamed: "picklerickdown")
         pipeTextureDown.filteringMode = .nearest
+        
+//        let texturedDownRick = SKSpriteNode(texture: pipeTextureDown)
+//        texturedDownRick.physicsBody = SKPhysicsBody(texture: pipeTextureDown,
+//                                                 size: CGSize(width: circularDownRick.size.width,
+//                                                              height: circularDownRick.size.height))
         
         // create the pipes movement actions
         let distanceToMove = CGFloat(self.frame.size.width + 2.0 * pipeTextureUp.size().width)
@@ -93,15 +108,15 @@ class GameScene: SKScene, SKPhysicsContactDelegate{
         
         // spawn the pipes
         let spawn = SKAction.run(spawnPipes)
-        let delay = SKAction.wait(forDuration: TimeInterval(2.0))
+        let delay = SKAction.wait(forDuration: TimeInterval(3.0)) //edit this when you put pickle rick in
         let spawnThenDelay = SKAction.sequence([spawn, delay])
         let spawnThenDelayForever = SKAction.repeatForever(spawnThenDelay)
         self.run(spawnThenDelayForever)
         
         // setup our bird
-        let birdTexture1 = SKTexture(imageNamed: "bird-01")
+        let birdTexture1 = SKTexture(imageNamed: "spaceship-1")
         birdTexture1.filteringMode = .nearest
-        let birdTexture2 = SKTexture(imageNamed: "bird-02")
+        let birdTexture2 = SKTexture(imageNamed: "spaceship-1")
         birdTexture2.filteringMode = .nearest
         
         let anim = SKAction.animate(with: [birdTexture1, birdTexture2], timePerFrame: 0.2)
@@ -113,7 +128,10 @@ class GameScene: SKScene, SKPhysicsContactDelegate{
         bird.run(flap)
         
         
-        bird.physicsBody = SKPhysicsBody(circleOfRadius: bird.size.height / 2.0)
+//        bird.physicsBody = SKPhysicsBody(circleOfRadius: bird.size.height / 2.0)
+        bird.physicsBody = SKPhysicsBody(texture: birdTexture1,
+                                                     size: CGSize(width: bird.size.width / 1.4,
+                                                                  height: bird.size.height / 1.3))
         bird.physicsBody?.isDynamic = true
         bird.physicsBody?.allowsRotation = false
         
@@ -149,30 +167,57 @@ class GameScene: SKScene, SKPhysicsContactDelegate{
         let height = UInt32( self.frame.size.height / 4)
         let y = Double(arc4random_uniform(height) + height)
         
-        let pipeDown = SKSpriteNode(texture: pipeTextureDown)
-        pipeDown.setScale(2.0)
-        pipeDown.position = CGPoint(x: 0.0, y: y + Double(pipeDown.size.height) + verticalPipeGap)
+//        let pipeDown = SKSpriteNode(texture: pipeTextureDown)
+//        pipeDown.setScale(2.0)
+//        pipeDown.position = CGPoint(x: 0.0, y: y + Double(pipeDown.size.height) + verticalPipeGap)
+//
+//
+//        pipeDown.physicsBody = SKPhysicsBody(rectangleOf: pipeDown.size)
+//        pipeDown.physicsBody?.isDynamic = false
+//        pipeDown.physicsBody?.categoryBitMask = pipeCategory
+//        pipeDown.physicsBody?.contactTestBitMask = birdCategory
+//        pipePair.addChild(pipeDown)
         
+//        let pipeUp = SKSpriteNode(texture: pipeTextureUp)
+//        pipeUp.setScale(2.0)
+//        pipeUp.position = CGPoint(x: 0.0, y: y)
+
+//        pipeUp.physicsBody = SKPhysicsBody(rectangleOf: pipeUp.size)
+//        pipeUp.physicsBody?.isDynamic = false
+//        pipeUp.physicsBody?.categoryBitMask = pipeCategory
+//        pipeUp.physicsBody?.contactTestBitMask = birdCategory
+//        pipePair.addChild(pipeUp)
+        let texturedDownRick = SKSpriteNode(texture: pipeTextureDown)
+        texturedDownRick.setScale(2.0)
+        texturedDownRick.position = CGPoint(x: 0.0, y: y + Double(texturedDownRick.size.height) + verticalPipeGap)
+        texturedDownRick.physicsBody = SKPhysicsBody(texture: pipeTextureDown,
+                                                     size: CGSize(width: texturedDownRick.size.width,
+                                                                  height: texturedDownRick.size.height))
         
-        pipeDown.physicsBody = SKPhysicsBody(rectangleOf: pipeDown.size)
-        pipeDown.physicsBody?.isDynamic = false
-        pipeDown.physicsBody?.categoryBitMask = pipeCategory
-        pipeDown.physicsBody?.contactTestBitMask = birdCategory
-        pipePair.addChild(pipeDown)
+        texturedDownRick.physicsBody?.isDynamic = false
+        texturedDownRick.physicsBody?.categoryBitMask = pipeCategory
+        texturedDownRick.physicsBody?.contactTestBitMask = birdCategory
+        pipePair.addChild(texturedDownRick)
+
         
-        let pipeUp = SKSpriteNode(texture: pipeTextureUp)
-        pipeUp.setScale(2.0)
-        pipeUp.position = CGPoint(x: 0.0, y: y)
+        let texturedRick = SKSpriteNode(texture: pipeTextureUp)
+        texturedRick.setScale(2.0)
+        texturedRick.position = CGPoint(x: 0.0, y: y)
+        texturedRick.physicsBody = SKPhysicsBody(texture: pipeTextureUp,
+                                                 size: CGSize(width: texturedRick.size.width,
+                                                              height: texturedRick.size.height))
         
-        pipeUp.physicsBody = SKPhysicsBody(rectangleOf: pipeUp.size)
-        pipeUp.physicsBody?.isDynamic = false
-        pipeUp.physicsBody?.categoryBitMask = pipeCategory
-        pipeUp.physicsBody?.contactTestBitMask = birdCategory
-        pipePair.addChild(pipeUp)
+        texturedRick.physicsBody?.isDynamic = false
+        texturedRick.physicsBody?.categoryBitMask = pipeCategory
+        texturedRick.physicsBody?.contactTestBitMask = birdCategory
+        pipePair.addChild(texturedRick)
+        
+
+        
         
         let contactNode = SKNode()
-        contactNode.position = CGPoint( x: pipeDown.size.width + bird.size.width / 2, y: self.frame.midY )
-        contactNode.physicsBody = SKPhysicsBody(rectangleOf: CGSize( width: pipeUp.size.width, height: self.frame.size.height ))
+        contactNode.position = CGPoint( x: texturedDownRick.size.width + bird.size.width / 2, y: self.frame.midY )
+        contactNode.physicsBody = SKPhysicsBody(rectangleOf: CGSize( width: texturedRick.size.width, height: self.frame.size.height ))
         contactNode.physicsBody?.isDynamic = false
         contactNode.physicsBody?.categoryBitMask = scoreCategory
         contactNode.physicsBody?.contactTestBitMask = birdCategory
@@ -208,7 +253,7 @@ class GameScene: SKScene, SKPhysicsContactDelegate{
         if moving.speed > 0  {
             for _ in touches { // do we need all touches?
                 bird.physicsBody?.velocity = CGVector(dx: 0, dy: 0)
-                bird.physicsBody?.applyImpulse(CGVector(dx: 0, dy: 30))
+                bird.physicsBody?.applyImpulse(CGVector(dx: 0, dy: 23))
             }
         } else if canRestart {
             self.resetScene()
@@ -241,7 +286,7 @@ class GameScene: SKScene, SKPhysicsContactDelegate{
                 // Flash background if contact is detected
                 self.removeAction(forKey: "flash")
                 self.run(SKAction.sequence([SKAction.repeat(SKAction.sequence([SKAction.run({
-                    self.backgroundColor = SKColor(red: 1, green: 0, blue: 0, alpha: 1.0)
+                    self.backgroundColor = SKColor.purple
                     }),SKAction.wait(forDuration: TimeInterval(0.05)), SKAction.run({
                         self.backgroundColor = self.skyColor
                         }), SKAction.wait(forDuration: TimeInterval(0.05))]), count:4), SKAction.run({
